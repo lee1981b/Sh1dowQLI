@@ -21,11 +21,12 @@ Before using the tool, ensure you have the following:
 2. Required Python libraries:
    - `colorama`
    - `requests`
+   - `subprocess`
 ```
 To install dependencies, run:
 
 ```bash
-pip install colorama requests
+pip install colorama requests subprocess
 ```
 
 ---
