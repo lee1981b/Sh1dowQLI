@@ -1,8 +1,11 @@
-import os                                                                                       import subprocess
+import os
+import subprocess
 from colorama import Fore, init
-                                                                                                init(autoreset=True)
 
-def clear():                                                                                        os.system("clear" if os.name == "posix" else "cls")
+init(autoreset=True)
+
+def clear():
+    os.system("clear" if os.name == "posix" else "cls")
 
 def banner():
     print(Fore.MAGENTA + "╔═══════════════════════════════════════════════════════════════════╗")
@@ -19,6 +22,18 @@ def banner():
     print(Fore.GREEN + "|                    Made by hexsh1dow                     |")
     print(Fore.GREEN + "╚══════════════════════════════════════════════════════════╝")
 
+def credits():
+    clear()
+    print(Fore.YELLOW + "╔════════════════════════════════════════════════════════╗")
+    print(Fore.GREEN + """
+[+] Tool: Sh1dowQLI
+[+] Author: @hexsh1dow
+[+] Support : @GirlsWhoCodeBot
+[+] Features: Error-Based SQLi, Blind SQLi
+[+] Version: 1.0
+    """)
+    print(Fore.YELLOW + "╚════════════════════════════════════════════════════════╝")
+    input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
 def error_based_sqli():
     clear()
     print(Fore.YELLOW + "[*] Running Error-Based SQL Injection scan...")
@@ -50,17 +65,8 @@ def menu():
         elif choice == "2":
             blind_sqli()
         elif choice == "3":
+            credits()
 
-            clear()
-            print(Fore.YELLOW + "╔════════════════════════════════════════════════════════╗")
-            print(Fore.GREEN + """
-[+] Tool: SQL Injection Scanner
-[+] Author: @hexsh1dow
-[+] Support : @GirlsWhoCodeBot
-[+] Features: Error-Based SQLi, Blind SQLi
-[+] Version: 1.0
-    """)
-            print(Fore.YELLOW + "╚════════════════════════════════════════════════════════╝")
         elif choice == "0":
             print(Fore.GREEN + "[+] Exiting. Thank you!")
             break
