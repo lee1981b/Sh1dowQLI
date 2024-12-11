@@ -26,7 +26,7 @@ def credits():
     clear()
     print(Fore.YELLOW + "╔════════════════════════════════════════════════════════╗")
     print(Fore.GREEN + """
-[+] Tool: SQL Injection Scanner
+[+] Tool: Sh1dowQLI
 [+] Author: @hexsh1dow
 [+] Support : @GirlsWhoCodeBot
 [+] Features: Error-Based SQLi, Blind SQLi
