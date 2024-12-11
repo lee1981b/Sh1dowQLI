@@ -37,7 +37,7 @@ pip install colorama requests
 ```bash
 git clone https://github.com/HexShad0w/Sh1dowQLI.git
 
-cd sql-injection-scanner
+cd Sh1dowQLI
 ```
 
 2. Run the tool:
