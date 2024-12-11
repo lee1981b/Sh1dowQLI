@@ -26,7 +26,7 @@ Before using the tool, ensure you have the following:
 To install dependencies, run:
 
 ```bash
-pip install colorama requests subprocess
+pip install colorama requests
 ```
 
 ---
