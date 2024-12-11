@@ -43,6 +43,6 @@ cd sql-injection-scanner
 2. Run the tool:
 
 ```bash
-python3 main.py
+python3 sh1dowqli.py
 ```
 
