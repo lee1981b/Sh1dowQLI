@@ -21,7 +21,6 @@ Before using the tool, ensure you have the following:
 2. Required Python libraries:
    - `colorama`
    - `requests`
-   - `subprocess`
 ```
 To install dependencies, run:
 
