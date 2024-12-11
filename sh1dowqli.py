@@ -29,7 +29,7 @@ def credits():
 [+] Tool: Sh1dowQLI
 [+] Author: @hexsh1dow
 [+] Support : @GirlsWhoCodeBot
-[+] Features: Error-Based SQLi, Blind SQLi
+[+] Features: Error-Based SQLi, Time-Based SQLi
 [+] Version: 1.0
     """)
     print(Fore.YELLOW + "╚════════════════════════════════════════════════════════╝")
