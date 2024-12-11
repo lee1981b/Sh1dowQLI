@@ -42,7 +42,7 @@ def error_based_sqli():
 
 def blind_sqli():
     clear()
-    print(Fore.YELLOW + "[*] Running Error-Based SQL Injection scan...")
+    print(Fore.YELLOW + "[*] Running Time-Based SQL Injection scan...")
     subprocess.run(["python3", "time-based.py"])
     input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
 
