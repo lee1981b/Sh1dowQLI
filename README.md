@@ -40,7 +40,7 @@ git clone https://github.com/HexShad0w/Sh1dowQLI.git
 cd Sh1dowQLI
 ```
 
-2. Run the tool:
+## Run the tool:
 
 ```bash
 python3 sh1dowqli.py
