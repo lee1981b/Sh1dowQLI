@@ -1,5 +1,6 @@
 import os
 import requests
+import argparse
 from colorama import Fore, init
 
 init(autoreset=True)
@@ -22,6 +23,7 @@ def banner():
 
 """)
     print(Fore.MAGENTA + "╚═══════════════════════════════════════════════════════════════════════════════╝")
+
 
 def detect_database_type(response_text):
     db_errors = {
@@ -90,7 +92,7 @@ def sqli_scanner(url, payloads, output_file):
     return results
 
 
-def main():
+def interactive_mode():
     while True:
         clear()
         banner()
@@ -131,6 +133,27 @@ def main():
         else:
             print(Fore.RED + "[!] Invalid choice. Please try again.")
             input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Error-Based SQL Injection Scanner")
+    parser.add_argument("-u", "--url", help="Target URL with a parameter")
+    parser.add_argument("-p", "--payloads", help="File containing payloads", default="payloads/error_based.txt")
+    parser.add_argument("-o", "--output", help="File to save results", default="error_based_results.txt")
+
+    args = parser.parse_args()
+
+    if args.url:
+        clear()
+        banner()
+        print(f"{Fore.GREEN}[+] Running in command-line mode...")
+        payloads = load_payloads(args.payloads)
+        if not payloads:
+            print(f"{Fore.RED}[!] No payloads loaded. Ensure {args.payloads} exists and is not empty.")
+            return
+        sqli_scanner(args.url, payloads, args.output)
+    else:
+        interactive_mode()
 
 
 if __name__ == "__main__":
