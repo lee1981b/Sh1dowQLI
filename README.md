@@ -49,17 +49,17 @@ OR
 
 Use command-line arguments for faster, automated scans:
 
--u: Specify your target URL
--p: Load your custom payload file
+-u: Specify your target URL <br>
+-p: Load your custom payload file <br>
 -o: Save results to a file
 
 
 ```bash
-python3 time-based.py -u http://testphp.vulnweb.com/listproducts.php?cat=* -p payloads/time_based.txt -o output.txt
+python3 time-based.py -u target url -p payloads/time_based.txt -o output.txt
 ```
 
 ```bash
-python3 error-based.py -u http://testphp.vulnweb.com/listproducts.php?cat= -p payloads/error_based.txt -o output.txt
+python3 error-based.py -u target url -p payloads/error_based.txt -o output.txt
 ```
 
 
