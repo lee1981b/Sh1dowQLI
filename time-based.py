@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+import argparse
 from colorama import Fore, init
 
 init(autoreset=True)
@@ -81,7 +82,7 @@ def detect_sqli(target_url, payload_file, output_file):
         print(Fore.RED + "\n[!] Exiting...")
 
 
-def main():
+def interactive_mode():
     while True:
         clear()
         banner()
@@ -107,15 +108,31 @@ def main():
             print(Fore.GREEN + "[+] Exiting. Thank you!")
             break
         else:
-            clear()
-            banner()
-            print(Fore.MAGENTA + "\n[!] Ensure the URL includes '*' where payloads will be tested")
-            target = input(Fore.CYAN + "\nEnter the target URL: ").strip()
-            payload_file = "payloads/time_based.txt"
-            output_file = "time_based_results.txt"
+            print(Fore.RED + "[!] Invalid choice. Please try again.")
+            input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
 
-            detect_sqli(target, payload_file, output_file)
-            input(Fore.CYAN + "\n[*] Press Enter to return to the main menu...")
+
+def main():
+    parser = argparse.ArgumentParser(description="Time-Based SQL Injection Scanner")
+    parser.add_argument("-u", "--url", help="Target URL with '*' for injection")
+    parser.add_argument("-p", "--payloads", help="File containing payloads", default="payloads/time_based.txt")
+    parser.add_argument("-o", "--output", help="File to save results", default="time_based_results.txt")
+
+    args = parser.parse_args()
+
+    if args.url:
+        clear()
+        banner()
+        print(f"{Fore.GREEN}[+] Running in command-line mode...")
+        if "*" not in args.url:
+            print(f"{Fore.RED}[!] Invalid URL format. Ensure the URL contains '*' for injection.")
+            return
+
+        payloads_file = args.payloads
+        output_file = args.output
+        detect_sqli(args.url, payloads_file, output_file)
+    else:
+        interactive_mode()
 
 
 if __name__ == "__main__":
