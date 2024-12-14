@@ -45,4 +45,21 @@ cd Sh1dowQLI
 ```bash
 python3 sh1dowqli.py
 ```
+OR
+
+Use command-line arguments for faster, automated scans:
+
+-u: Specify your target URL
+-p: Load your custom payload file
+-o: Save results to a file
+
+
+```bash
+python3 time-based.py -u http://testphp.vulnweb.com/listproducts.php?cat=* -p payloads/time_based.txt -o output.txt
+```
+
+```bash
+python3 error-based.py -u http://testphp.vulnweb.com/listproducts.php?cat= -p payloads/error_based.txt -o output.txt
+```
+
 
