@@ -50,6 +50,7 @@ OR
 Use command-line arguments for faster, automated scans:
 
 -u: Specify your target URL <br>
+-f: File containing multiple URLs <br>
 -p: Load your custom payload file <br>
 -o: Save results to a file
 
