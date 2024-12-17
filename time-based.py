@@ -108,7 +108,7 @@ def interactive_mode():
         clear()
         banner()
         print(Fore.CYAN + "\n╔═════════════════════════════════════════════════════╗")
-        print(Fore.CYAN + "| " + Fore.GREEN + "[1] Start Time-Based SQL Injection Scan (Single URL)" + Fore.CYAN + " |")
+        print(Fore.CYAN + "| " + Fore.GREEN + "[1] Start Time-Based SQL Injection Scan (Single URL)" + Fore.CYAN + "|")
         print(Fore.CYAN + "| " + Fore.GREEN + "[2] Start Time-Based SQL Injection Scan (URLs File)" + Fore.CYAN + " |")
         print(Fore.CYAN + "| " + Fore.RED + "[0] Exit" + Fore.CYAN + "                                            |")
         print(Fore.CYAN + "╚═════════════════════════════════════════════════════╝")
