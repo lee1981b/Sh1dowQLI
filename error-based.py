@@ -25,19 +25,6 @@ def banner():
     print(Fore.MAGENTA + "╚═══════════════════════════════════════════════════════════════════════════════╝")
 
 
-def detect_database_type(response_text):
-    db_errors = {
-        "MySQL": "you have an error in your sql syntax",
-        "MSSQL": "unclosed quotation mark",
-        "Oracle": "ora-01756",
-        "PostgreSQL": "syntax error at or near",
-    }
-    for db, error in db_errors.items():
-        if error.lower() in response_text.lower():
-            return db
-    return None
-
-
 def load_payloads(file_path):
     try:
         with open(file_path, "r") as file:
@@ -45,6 +32,16 @@ def load_payloads(file_path):
         return payloads
     except FileNotFoundError:
         print(f"{Fore.RED}[!] Payload file not found: {file_path}")
+        return []
+
+
+def load_urls(file_path):
+    try:
+        with open(file_path, "r") as file:
+            urls = [line.strip() for line in file.readlines() if line.strip()]
+        return urls
+    except FileNotFoundError:
+        print(f"{Fore.RED}[!] URLs file not found: {file_path}")
         return []
 
 
@@ -61,31 +58,46 @@ def inject_payload(url, payload):
     return None
 
 
-def sqli_scanner(url, payloads, output_file):
-    results = []
-    for payload in payloads:
-        injected_url = inject_payload(url, payload)
-        if not injected_url:
-            print(f"{Fore.RED}[!] Could not construct an injected URL for payload: {payload}")
-            continue
+def detect_database_type(response_text):
+    db_errors = {
+        "MySQL": "you have an error in your sql syntax",
+        "MSSQL": "unclosed quotation mark",
+        "Oracle": "ora-01756",
+        "PostgreSQL": "syntax error at or near",
+    }
+    for db, error in db_errors.items():
+        if error.lower() in response_text.lower():
+            return db
+    return None
 
-        print(f"{Fore.CYAN}[*] Testing payload: {Fore.YELLOW}{payload}")
-        try:
-            response = requests.get(injected_url, timeout=5)
-            db_type = detect_database_type(response.text)
-            if db_type:
-                print(f"{Fore.GREEN}[!] Vulnerable! Database Type: {Fore.YELLOW}{db_type}")
-                print(f"    {Fore.GREEN}Payload: {Fore.YELLOW}{payload}")
-                print(f"    {Fore.GREEN}URL: {Fore.YELLOW}{injected_url}")
-                results.append({"payload": payload, "db_type": db_type, "url": injected_url})
-        except requests.exceptions.RequestException as e:
-            print(f"{Fore.RED}[!] Request failed for payload {payload}: {e}")
+
+def error_based_sqli_scanner(urls, payloads, output_file):
+    results = []
+    for url in urls:
+        print(f"{Fore.GREEN}[+] Testing URL: {Fore.YELLOW}{url}")
+        for payload in payloads:
+            injected_url = inject_payload(url, payload)
+            if not injected_url:
+                print(f"{Fore.RED}[!] Could not construct an injected URL for payload: {payload}")
+                continue
+
+            print(f"{Fore.CYAN}[*] Testing payload: {Fore.YELLOW}{payload}")
+            try:
+                response = requests.get(injected_url, timeout=5)
+                db_type = detect_database_type(response.text)
+                if db_type:
+                    print(f"{Fore.GREEN}[!] Vulnerable! Database Type: {Fore.YELLOW}{db_type}")
+                    print(f"    {Fore.GREEN}Payload: {Fore.YELLOW}{payload}")
+                    print(f"    {Fore.GREEN}URL: {Fore.YELLOW}{injected_url}")
+                    results.append(injected_url)
+            except requests.exceptions.RequestException as e:
+                print(f"{Fore.RED}[!] Request failed for payload {payload}: {e}")
 
     if results:
         with open(output_file, "w") as file:
-            for result in results:
-                file.write(f"Payload: {result['payload']} | DB: {result['db_type']} | URL: {result['url']}\n")
-        print(f"{Fore.GREEN}\n[+] Results saved to '{output_file}'.")
+            for url in results:
+                file.write(f"{url}\n")
+        print(f"{Fore.GREEN}\n[+] Vulnerable URLs saved to '{output_file}'.")
     else:
         print(f"{Fore.YELLOW}[!] No vulnerabilities found with the tested payloads.")
 
@@ -106,23 +118,20 @@ def interactive_mode():
         if choice == "1":
             clear()
             banner()
-            url = input(f"{Fore.YELLOW}[?] Enter the target URL (with a parameter, e.g., http://example.com/page.php?id=): ").strip()
-            if "?" not in url:
-                print(f"{Fore.RED}[!] Invalid URL format. Make sure to include a parameter.")
-                input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
-                continue
+            urls_input = input(f"{Fore.YELLOW}[?] Enter a URL or path to a file containing URLs: ").strip()
+            urls = [urls_input] if os.path.isfile(urls_input) is False else load_urls(urls_input)
 
             payload_file = "payloads/error_based.txt"
             output_file = "error_based_results.txt"
 
-            print(f"{Fore.GREEN}[+] Starting SQLi scan on: {Fore.CYAN}{url}")
+            print(f"{Fore.GREEN}[+] Starting SQLi scan...")
             payloads = load_payloads(payload_file)
             if not payloads:
                 print(f"{Fore.RED}[!] No payloads loaded. Ensure {payload_file} exists and is not empty.")
                 input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
                 continue
 
-            results = sqli_scanner(url, payloads, output_file)
+            results = error_based_sqli_scanner(urls, payloads, output_file)
 
             input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
 
@@ -138,20 +147,22 @@ def interactive_mode():
 def main():
     parser = argparse.ArgumentParser(description="Error-Based SQL Injection Scanner")
     parser.add_argument("-u", "--url", help="Target URL with a parameter")
+    parser.add_argument("-f", "--file", help="File containing multiple URLs")
     parser.add_argument("-p", "--payloads", help="File containing payloads", default="payloads/error_based.txt")
     parser.add_argument("-o", "--output", help="File to save results", default="error_based_results.txt")
 
     args = parser.parse_args()
 
-    if args.url:
+    if args.url or args.file:
         clear()
         banner()
         print(f"{Fore.GREEN}[+] Running in command-line mode...")
+        urls = [args.url] if args.url else load_urls(args.file)
         payloads = load_payloads(args.payloads)
         if not payloads:
             print(f"{Fore.RED}[!] No payloads loaded. Ensure {args.payloads} exists and is not empty.")
             return
-        sqli_scanner(args.url, payloads, args.output)
+        error_based_sqli_scanner(urls, payloads, args.output)
     else:
         interactive_mode()
 
