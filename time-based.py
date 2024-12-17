@@ -82,12 +82,34 @@ def detect_sqli(target_url, payload_file, output_file):
         print(Fore.RED + "\n[!] Exiting...")
 
 
+def handle_multiple_urls(urls_file, payload_file, output_file):
+    try:
+        with open(urls_file, "r") as file:
+            urls = [line.strip() for line in file.readlines()]
+        if not urls:
+            print(Fore.RED + "[!] No URLs found in the file. Exiting.")
+            return
+
+        for url in urls:
+            if "*" not in url:
+                print(Fore.RED + f"[!] Skipping invalid URL (missing '*'): {url}")
+                continue
+
+            print(Fore.BLUE + f"\n[+] Testing URL: {url}")
+            detect_sqli(url, payload_file, output_file)
+    except FileNotFoundError:
+        print(Fore.RED + f"[!] Error: URLs file '{urls_file}' not found.")
+    except Exception as e:
+        print(Fore.RED + f"[!] An unexpected error occurred: {e}")
+
+
 def interactive_mode():
     while True:
         clear()
         banner()
         print(Fore.CYAN + "\n╔═════════════════════════════════════════════════════╗")
-        print(Fore.CYAN + "| " + Fore.GREEN + "[1] Start Time-Based SQL Injection Scan" + Fore.CYAN + "             |")
+        print(Fore.CYAN + "| " + Fore.GREEN + "[1] Start Time-Based SQL Injection Scan (Single URL)" + Fore.CYAN + " |")
+        print(Fore.CYAN + "| " + Fore.GREEN + "[2] Start Time-Based SQL Injection Scan (URLs File)" + Fore.CYAN + " |")
         print(Fore.CYAN + "| " + Fore.RED + "[0] Exit" + Fore.CYAN + "                                            |")
         print(Fore.CYAN + "╚═════════════════════════════════════════════════════╝")
 
@@ -104,6 +126,17 @@ def interactive_mode():
             detect_sqli(target, payload_file, output_file)
             input(Fore.CYAN + "\n[*] Press Enter to return to the main menu...")
 
+        elif choice == "2":
+            clear()
+            banner()
+            print(Fore.MAGENTA + "[!] Provide the path to the file containing URLs.")
+            urls_file = input(Fore.CYAN + "\nEnter the path to the URLs file: ").strip()
+            payload_file = "payloads/time_based.txt"
+            output_file = "time_based_results.txt"
+
+            handle_multiple_urls(urls_file, payload_file, output_file)
+            input(Fore.CYAN + "\n[*] Press Enter to return to the main menu...")
+
         elif choice == "0":
             print(Fore.GREEN + "[+] Exiting. Thank you!")
             break
@@ -115,6 +148,7 @@ def interactive_mode():
 def main():
     parser = argparse.ArgumentParser(description="Time-Based SQL Injection Scanner")
     parser.add_argument("-u", "--url", help="Target URL with '*' for injection")
+    parser.add_argument("-f", "--file", help="File containing URLs for injection")
     parser.add_argument("-p", "--payloads", help="File containing payloads", default="payloads/time_based.txt")
     parser.add_argument("-o", "--output", help="File to save results", default="time_based_results.txt")
 
@@ -128,9 +162,14 @@ def main():
             print(f"{Fore.RED}[!] Invalid URL format. Ensure the URL contains '*' for injection.")
             return
 
-        payloads_file = args.payloads
-        output_file = args.output
-        detect_sqli(args.url, payloads_file, output_file)
+        detect_sqli(args.url, args.payloads, args.output)
+
+    elif args.file:
+        clear()
+        banner()
+        print(f"{Fore.GREEN}[+] Running in command-line mode with URLs file...")
+        handle_multiple_urls(args.file, args.payloads, args.output)
+
     else:
         interactive_mode()
 
