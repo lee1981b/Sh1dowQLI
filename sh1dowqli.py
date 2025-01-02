@@ -28,7 +28,6 @@ def credits():
     print(Fore.GREEN + """
 [+] Tool: Sh1dowQLI
 [+] Author: @hexsh1dow
-[+] Support: @GirlsWhoCodeBot
 [+] Features: Error-Based SQLi, Time-Based SQLi
 [+] Version: 1.0
     """)
