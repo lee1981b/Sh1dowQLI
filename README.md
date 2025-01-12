@@ -63,4 +63,16 @@ python3 time-based.py -u target url -p payloads/time_based.txt -o output.txt
 python3 error-based.py -u target url -p payloads/error_based.txt -o output.txt
 ```
 
+---
 
+# Contribution
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository.
+2. Make your changes.
+3. Submit a pull request.
+
+
+
+Feel free to reach out to me on X (formerly Twitter): <a href="https://x.com/hexsh1dow">Click Here</a>
