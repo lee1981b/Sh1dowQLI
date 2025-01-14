@@ -8,7 +8,8 @@ A Python-based SQL Injection Scanner designed to detect SQL vulnerabilities in w
 
 - **Error-Based SQL Injection Scan**
 - **Time-Based SQL Injection Scan**
-- User-friendly interface
+- **bash script to find potential SQLi params**
+- **User-friendly interface**
 
 ---
 
@@ -62,6 +63,26 @@ python3 time-based.py -u target url -p payloads/time_based.txt -o output.txt
 ```bash
 python3 error-based.py -u target url -p payloads/error_based.txt -o output.txt
 ```
+
+Search for Potential SQLi Parameters
+
+To begin, run the script to search for potential SQL injection (SQLi) parameters in the provided URLs.
+
+```bash
+./sqli.sh
+```
+
+Once executed, you'll be prompted to enter the target URL or domain. The script will use Katana to perform a passive and active scan to identify potential SQLi parameters.
+
+Install Katana
+
+To install Katana, follow these steps:
+
+```bash
+go get -u github.com/projectdiscovery/katana
+```
+
+Ensure you have Go installed on your system to run the installation command.
 
 ---
 
