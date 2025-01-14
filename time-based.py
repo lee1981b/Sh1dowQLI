@@ -6,13 +6,12 @@ from colorama import Fore, init
 
 init(autoreset=True)
 
-
 def clear():
     os.system("clear" if os.name == "posix" else "cls")
 
 
 def banner():
-    print(Fore.MAGENTA + "╔══════════════════════════════════════════════════════════════════════════╗")
+    print(Fore.MAGENTA + "╔═══════════════════════════════════════════════════════════════════════════╗")
     print(Fore.CYAN + r"""
 ████████╗██╗███╗   ███╗███████╗    ██████╗  █████╗ ███████╗███████╗██████╗
 ╚══██╔══╝██║████╗ ████║██╔════╝    ██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗
@@ -21,12 +20,12 @@ def banner():
    ██║   ██║██║ ╚═╝ ██║███████╗    ██████╔╝██║  ██║███████║███████╗██████╔╝
    ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝
 """)
-    print(Fore.MAGENTA + "╚══════════════════════════════════════════════════════════════════════════╝")
+    print(Fore.MAGENTA + "╚═══════════════════════════════════════════════════════════════════════════╝")
 
 
 def detect_sqli(target_url, payload_file, output_file):
-    print(Fore.BLUE + f"[+] Starting SQLi detection on: {target_url}")
-    results = []
+    print(Fore.BLUE +"[+] Starting SQLi detection on:"+Fore.GREEN+f" {target_url}")
+    vulnerable_urls = []
     timeout_threshold = 10
 
     try:
@@ -36,7 +35,7 @@ def detect_sqli(target_url, payload_file, output_file):
             print(Fore.RED + "[!] No payloads found in the file. Exiting.")
             return
 
-        print(Fore.BLUE + f"[+] Loaded {len(payloads)} payloads for testing.\n")
+        print(Fore.BLUE + "[+] Loaded"+Fore.GREEN+f" {len(payloads)}"+Fore.BLUE+" payloads for testing.\n")
 
         for i, payload in enumerate(payloads, 1):
             print(Fore.YELLOW + f"[*] Testing payload {i}/{len(payloads)}: {payload}")
@@ -47,39 +46,35 @@ def detect_sqli(target_url, payload_file, output_file):
             try:
                 response = requests.get(injection_url, timeout=timeout_threshold + 2)
             except requests.exceptions.Timeout:
-                print(Fore.RED + f"[!!!] Timeout detected for payload: {payload}")
-                print(Fore.GREEN + f"      [!] This is likely a vulnerability as it exceeds {timeout_threshold} seconds.")
-                results.append(f"[!!!] Timeout detected with payload: {payload}")
+                print(Fore.GREEN + f"[!!!] Timeout detected with payload: {payload}")
+                vulnerable_urls.append(f"{target_url} | Payload: {payload}")
                 continue
             except requests.exceptions.RequestException as e:
                 print(Fore.RED + f"[!] Error during request: {e}")
-                results.append(f"[!] Error with payload: {payload}. Details: {e}")
                 continue
 
-            end_time = time.time()
-            elapsed_time = end_time - start_time
+            elapsed_time = time.time() - start_time
 
             if elapsed_time > timeout_threshold:
-                print(Fore.GREEN + f"[!!!] Potential SQLi vulnerability detected with payload: {payload}")
-                print(Fore.GREEN + f"      Response time: {elapsed_time:.2f} seconds")
-                results.append(f"[!!!] Vulnerable payload: {payload} | Response time: {elapsed_time:.2f} seconds")
+                print(Fore.GREEN + f"[!!!] Potential vulnerability detected with payload: {payload}")
+                vulnerable_urls.append(f"{target_url} | Payload: {payload}")
             else:
                 print(Fore.RED + f"[-] No vulnerability detected for payload: {payload}")
-                results.append(f"[-] No vulnerability detected with payload: {payload}")
 
-        if results:
+        if vulnerable_urls:
             with open(output_file, "w") as file:
-                file.write("\n".join(results))
-            print(Fore.GREEN + f"\n[+] Results saved to '{output_file}'.")
+                file.write("\n".join(vulnerable_urls))
+            print(Fore.GREEN + f"\n[+] Vulnerable URLs saved to '{output_file}'.")
         else:
-            print(Fore.YELLOW + "\n[!] No results to save.")
+            print(Fore.YELLOW + "\n[!] No vulnerabilities detected.")
 
+    except KeyboardInterrupt:
+        print(Fore.RED + "\nExiting ...")
+        exit()
     except FileNotFoundError:
         print(Fore.RED + f"[!] Error: Payload file '{payload_file}' not found.")
     except Exception as e:
         print(Fore.RED + f"[!] An unexpected error occurred: {e}")
-    except KeyboardInterrupt:
-        print(Fore.RED + "\n[!] Exiting...")
 
 
 def handle_multiple_urls(urls_file, payload_file, output_file):
@@ -90,13 +85,23 @@ def handle_multiple_urls(urls_file, payload_file, output_file):
             print(Fore.RED + "[!] No URLs found in the file. Exiting.")
             return
 
+        vulnerable_urls = []
         for url in urls:
             if "*" not in url:
                 print(Fore.RED + f"[!] Skipping invalid URL (missing '*'): {url}")
                 continue
 
             print(Fore.BLUE + f"\n[+] Testing URL: {url}")
-            detect_sqli(url, payload_file, output_file)
+            results = detect_sqli(url, payload_file, output_file)
+            vulnerable_urls.extend(results or [])
+
+        if vulnerable_urls:
+            with open(output_file, "w") as file:
+                file.write("\n".join(vulnerable_urls))
+            print(Fore.GREEN + f"\n[+] Vulnerable URLs saved to '{output_file}'.")
+        else:
+            print(Fore.YELLOW + "\n[!] No vulnerabilities detected across all URLs.")
+
     except FileNotFoundError:
         print(Fore.RED + f"[!] Error: URLs file '{urls_file}' not found.")
     except Exception as e:
@@ -107,21 +112,21 @@ def interactive_mode():
     while True:
         clear()
         banner()
-        print(Fore.CYAN + "\n╔═════════════════════════════════════════════════════╗")
-        print(Fore.CYAN + "| " + Fore.GREEN + "[1] Start Time-Based SQL Injection Scan (Single URL)" + Fore.CYAN + "|")
-        print(Fore.CYAN + "| " + Fore.GREEN + "[2] Start Time-Based SQL Injection Scan (URLs File)" + Fore.CYAN + " |")
-        print(Fore.CYAN + "| " + Fore.RED + "[0] Exit" + Fore.CYAN + "                                            |")
-        print(Fore.CYAN + "╚═════════════════════════════════════════════════════╝")
+        print(Fore.CYAN + "\n╔═══════════════════════════════════════════════════╗")
+        print(Fore.CYAN + "| " + Fore.GREEN + "[1] Start SQLi Scan (Single URL)" + Fore.CYAN + "                  |")
+        print(Fore.CYAN + "| " + Fore.GREEN + "[2] Start SQLi Scan (URLs File)" + Fore.CYAN + "                   |")
+        print(Fore.CYAN + "| " + Fore.RED + "[0] Exit" + Fore.CYAN + "                                          |")
+        print(Fore.CYAN + "╚═══════════════════════════════════════════════════╝")
 
         choice = input(Fore.CYAN + "\n[?] Enter your choice: ").strip()
 
         if choice == "1":
             clear()
             banner()
-            print(Fore.MAGENTA + "[!] Ensure the URL includes '*' where payloads will be tested")
+            print(Fore.MAGENTA + "[!] Ensure the URL includes '*' where payloads will be tested.")
             target = input(Fore.CYAN + "\nEnter the target URL: ").strip()
             payload_file = "payloads/time_based.txt"
-            output_file = "time_based_results.txt"
+            output_file = "vulnerable_results.txt"
 
             detect_sqli(target, payload_file, output_file)
             input(Fore.CYAN + "\n[*] Press Enter to return to the main menu...")
@@ -132,7 +137,7 @@ def interactive_mode():
             print(Fore.MAGENTA + "[!] Provide the path to the file containing URLs.")
             urls_file = input(Fore.CYAN + "\nEnter the path to the URLs file: ").strip()
             payload_file = "payloads/time_based.txt"
-            output_file = "time_based_results.txt"
+            output_file = "vulnerable_results.txt"
 
             handle_multiple_urls(urls_file, payload_file, output_file)
             input(Fore.CYAN + "\n[*] Press Enter to return to the main menu...")
@@ -150,7 +155,7 @@ def main():
     parser.add_argument("-u", "--url", help="Target URL with '*' for injection")
     parser.add_argument("-f", "--file", help="File containing URLs for injection")
     parser.add_argument("-p", "--payloads", help="File containing payloads", default="payloads/time_based.txt")
-    parser.add_argument("-o", "--output", help="File to save results", default="time_based_results.txt")
+    parser.add_argument("-o", "--output", help="File to save results", default="vulnerable_results.txt")
 
     args = parser.parse_args()
 
