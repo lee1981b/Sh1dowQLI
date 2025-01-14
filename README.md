@@ -79,7 +79,7 @@ Once executed, you'll be prompted to enter the target URL or domain. The script 
 To install Katana, follow these steps:
 
 ```bash
-go get -u github.com/projectdiscovery/katana
+go install github.com/projectdiscovery/katana/cmd/katana@latest
 ```
 
 Ensure you have Go installed on your system to run the installation command.
