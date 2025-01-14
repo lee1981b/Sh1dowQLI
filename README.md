@@ -37,8 +37,8 @@ Clone this repository:
 
 ```bash
 git clone https://github.com/HexShad0w/Sh1dowQLI.git
-
 cd Sh1dowQLI
+chmod +x *
 ```
 
 ## Run the tool:
@@ -69,7 +69,6 @@ python3 error-based.py -u target url -p payloads/error_based.txt -o output.txt
 To begin, run the script to search for potential SQL injection (SQLi) parameters in the provided URLs.
 
 ```bash
-chmod +x sqli.sh
 ./sqli.sh
 ```
 
