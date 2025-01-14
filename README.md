@@ -33,7 +33,7 @@ pip install colorama requests
 
 ## Installation
 
-Clone this repository:
+### Clone this repository:
 
 ```bash
 git clone https://github.com/HexShad0w/Sh1dowQLI.git
@@ -74,7 +74,7 @@ To begin, run the script to search for potential SQL injection (SQLi) parameters
 
 Once executed, you'll be prompted to enter the target URL or domain. The script will use Katana to perform a passive and active scan to identify potential SQLi parameters.
 
-Install Katana
+### Install Katana
 
 To install Katana, follow these steps:
 
