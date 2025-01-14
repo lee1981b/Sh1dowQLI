@@ -69,6 +69,7 @@ python3 error-based.py -u target url -p payloads/error_based.txt -o output.txt
 To begin, run the script to search for potential SQL injection (SQLi) parameters in the provided URLs.
 
 ```bash
+chmod +x sqli.sh
 ./sqli.sh
 ```
 
