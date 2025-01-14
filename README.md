@@ -33,7 +33,7 @@ pip install colorama requests
 
 ## Installation
 
-### Clone this repository:
+Clone this repository:
 
 ```bash
 git clone https://github.com/HexShad0w/Sh1dowQLI.git
