@@ -13,14 +13,12 @@ def clear():
 def banner():
     print(Fore.MAGENTA + "╔═══════════════════════════════════════════════════════════════════════════════╗")
     print(Fore.CYAN + r"""
-
 ███████╗██████╗ ██████╗  ██████╗ ██████╗ ██████╗  █████╗ ███████╗███████╗██████╗
 ██╔════╝██╔══██╗██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗
 █████╗  ██████╔╝██████╔╝██║   ██║██████╔╝██████╔╝███████║███████╗█████╗  ██║  ██║
 ██╔══╝  ██╔══██╗██╔══██╗██║   ██║██╔══██╗██╔══██╗██╔══██║╚════██║██╔══╝  ██║  ██║
 ███████╗██║  ██║██║  ██║╚██████╔╝██║  ██║██████╔╝██║  ██║███████║███████╗██████╔╝
 ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝
-
 """)
     print(Fore.MAGENTA + "╚═══════════════════════════════════════════════════════════════════════════════╝")
 
@@ -28,8 +26,7 @@ def banner():
 def load_payloads(file_path):
     try:
         with open(file_path, "r") as file:
-            payloads = [line.strip() for line in file.readlines() if line.strip()]
-        return payloads
+            return [line.strip() for line in file.readlines() if line.strip()]
     except FileNotFoundError:
         print(f"{Fore.RED}[!] Payload file not found: {file_path}")
         return []
@@ -38,8 +35,7 @@ def load_payloads(file_path):
 def load_urls(file_path):
     try:
         with open(file_path, "r") as file:
-            urls = [line.strip() for line in file.readlines() if line.strip()]
-        return urls
+            return [line.strip() for line in file.readlines() if line.strip()]
     except FileNotFoundError:
         print(f"{Fore.RED}[!] URLs file not found: {file_path}")
         return []
@@ -72,7 +68,7 @@ def detect_database_type(response_text):
 
 
 def error_based_sqli_scanner(urls, payloads, output_file):
-    results = []
+    vulnerable_urls = []
     for url in urls:
         print(f"{Fore.GREEN}[+] Testing URL: {Fore.YELLOW}{url}")
         for payload in payloads:
@@ -89,19 +85,19 @@ def error_based_sqli_scanner(urls, payloads, output_file):
                     print(f"{Fore.GREEN}[!] Vulnerable! Database Type: {Fore.YELLOW}{db_type}")
                     print(f"    {Fore.GREEN}Payload: {Fore.YELLOW}{payload}")
                     print(f"    {Fore.GREEN}URL: {Fore.YELLOW}{injected_url}")
-                    results.append(injected_url)
+                    vulnerable_urls.append(injected_url)
+                    break
             except requests.exceptions.RequestException as e:
                 print(f"{Fore.RED}[!] Request failed for payload {payload}: {e}")
 
-    if results:
+    if vulnerable_urls:
         with open(output_file, "w") as file:
-            for url in results:
-                file.write(f"{url}\n")
+            file.write("\n".join(vulnerable_urls))
         print(f"{Fore.GREEN}\n[+] Vulnerable URLs saved to '{output_file}'.")
     else:
         print(f"{Fore.YELLOW}[!] No vulnerabilities found with the tested payloads.")
 
-    return results
+    return vulnerable_urls
 
 
 def interactive_mode():
@@ -131,8 +127,7 @@ def interactive_mode():
                 input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
                 continue
 
-            results = error_based_sqli_scanner(urls, payloads, output_file)
-
+            error_based_sqli_scanner(urls, payloads, output_file)
             input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
 
         elif choice == "0":
