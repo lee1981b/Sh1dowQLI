@@ -8,7 +8,7 @@ A Python-based SQL Injection Scanner designed to detect SQL vulnerabilities in w
 
 - **Error-Based SQL Injection Scan**
 - **Time-Based SQL Injection Scan**
-- **bash script to find potential SQLi params**
+- **Bash script to find potential SQLi parameters**
 - **User-friendly interface**
 
 ---
@@ -64,7 +64,7 @@ python3 time-based.py -u target url -p payloads/time_based.txt -o output.txt
 python3 error-based.py -u target url -p payloads/error_based.txt -o output.txt
 ```
 
-Search for Potential SQLi Parameters
+## Search for Potential SQLi Parameters
 
 To begin, run the script to search for potential SQL injection (SQLi) parameters in the provided URLs.
 
