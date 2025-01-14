@@ -1,11 +1,22 @@
 import os
-import subprocess
-from colorama import Fore, init
+import time
+from colorama import Fore, Back, Style, init
 
 init(autoreset=True)
 
+
 def clear():
     os.system("clear" if os.name == "posix" else "cls")
+
+
+def animation():
+    text = "Welcome to Sh1dowQLI"
+    clear()
+    for i in range(len(text) + 1):
+        clear()
+        print(Fore.YELLOW + text[:i] + Style.BRIGHT)
+        time.sleep(0.1)
+    time.sleep(0.2)
 
 def banner():
     print(Fore.MAGENTA + "╔═══════════════════════════════════════════════════════════════════╗")
@@ -22,32 +33,34 @@ def banner():
     print(Fore.GREEN + "|                    Made by hexsh1dow                     |")
     print(Fore.GREEN + "╚══════════════════════════════════════════════════════════╝")
 
+
 def credits():
     clear()
     print(Fore.YELLOW + "╔════════════════════════════════════════════════════════╗")
-    print(Fore.GREEN + """
+    print(Fore.CYAN + """
 [+] Tool: Sh1dowQLI
 [+] Author: @hexsh1dow
 [+] Features: Error-Based SQLi, Time-Based SQLi
-[+] Version: 1.0
+[+] Version: 2.0
     """)
     print(Fore.YELLOW + "╚════════════════════════════════════════════════════════╝")
     input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
+
+
 def error_based_sqli():
     clear()
     print(Fore.YELLOW + "[*] Running Error-Based SQL Injection scan...")
-    subprocess.run(["python3", "error-based.py"])
-    input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
+    time.sleep(0.2)
+    os.system("python error-based.py")
 
 def blind_sqli():
     clear()
     print(Fore.YELLOW + "[*] Running Time-Based SQL Injection scan...")
-    subprocess.run(["python3", "time-based.py"])
-    input(Fore.CYAN + "[*] Press Enter to return to the main menu...")
+    time.sleep(0.2)
+    os.system("python time-based.py")
 
 def menu():
     while True:
-
         clear()
         banner()
         print(Fore.CYAN + "╔═════════════════════════════════════════════════════╗")
@@ -65,7 +78,6 @@ def menu():
             blind_sqli()
         elif choice == "3":
             credits()
-
         elif choice == "0":
             print(Fore.GREEN + "[+] Exiting. Thank you!")
             break
@@ -73,5 +85,7 @@ def menu():
             print(Fore.RED + "[!] Invalid choice. Please try again.")
             input(Fore.CYAN + "[*] Press Enter to return to menu...")
 
+
 if __name__ == "__main__":
+    animation()
     menu()
