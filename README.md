@@ -5,7 +5,7 @@ A Python-based SQL Injection Scanner designed to detect SQL vulnerabilities in w
 ---
 
 ## Features
-
+- **All-In-One SQLi Module**
 - **Error-Based SQL Injection Scan**
 - **Time-Based SQL Injection Scan**
 - **Bash script to find potential SQLi parameters**
