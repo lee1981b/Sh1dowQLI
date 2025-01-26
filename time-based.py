@@ -155,7 +155,7 @@ def main():
     parser.add_argument("-u", "--url", help="Target URL with '*' for injection")
     parser.add_argument("-f", "--file", help="File containing URLs for injection")
     parser.add_argument("-p", "--payloads", help="File containing payloads", default="payloads/time_based.txt")
-    parser.add_argument("-o", "--output", help="File to save results", default="vulnerable_results.txt")
+    parser.add_argument("-o", "--output", help="File to save results", default="time_based_results.txt")
 
     args = parser.parse_args()
 
