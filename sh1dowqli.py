@@ -37,7 +37,7 @@ def credits():
     print(Fore.CYAN + """
 [+] Tool: Sh1dowQLI
 [+] Author: @hexsh1dow
-[+] Features: Error-Based SQLi, Time-Based SQLi
+[+] Features: All-In-One SQLi Module, Error-Based SQLi, Time-Based SQLi
 [+] Version: 2.1
     """)
     print(Fore.YELLOW + "╚════════════════════════════════════════════════════════╝")
